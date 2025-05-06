@@ -4,42 +4,48 @@ pipeline{
         stage("stage1 : git checkout"){
           steps{
             echo 'git process started'
-            git url: "https://github.com/amar-trng25/addressbook-cicd-project"
+            git url: "https://github.com/amar-trng25/addressbook-cicd-project/"
             echo 'git process done'
           }
         }
-        stage("stage 2 :compile the code"){
+        stage("stage2 :compile the code"){
             steps{
                 sh "mvn compile"
             }
         }
-        stage("stage 3: run the test cases"){
+        stage("stage3: run the test cases"){
             steps{
                 sh "mvn test"
             }
         }
-	stage("stage3:quality-assurance of priject-pmd"){
+	stage("stage4: quality-assurance of priject-pmd"){
            		 steps{
                 sh "mvn pmd:pmd"
                 recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [pmdParser()]
                 echo 'qa done'
             }
         }
-        	stage("stage4:quality assurance of project - checkstyle optional"){
+        	stage("stage5: quality assurance of project - checkstyle optional"){
            	 	steps{
                 sh "mvn checkstyle:checkstyle"
                 recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [checkStyle()]
 	}
 }
-        	stage("stage5: package"){
+        	stage("stage6: package"){
             		steps{
              		sh "mvn package"
             }
         }
-        stage("stage6:deploy the project"){
+        stage("stage7: deploy the project"){
          steps{
-    	sh "sudo cp /var/lib/jenkins/workspace/proj3-pipeline/target/addressbook.war /home/ubuntu/apache-tomcat-9.0.104/webapps"
+        	sh "sudo cp /var/lib/jenkins/workspace/job3-pollscm/target/addressbook.war /home/ubuntu/apache-tomcat-9.0.104/webapps"
          }
+        }
+
+stage("stage8: Email notification"){
+            steps{
+                mail bcc: '', body: 'NIL', cc: '', from: 'amartrng25@gmail.com', replyTo: '', subject: 'Job3-pollscm pipeline build status', to: 'amartrng2016@gmail.com'
+            }
         }
     }
 }
